@@ -6,17 +6,27 @@ import matplotlib.pyplot as plt
 Estimates stock price based on n-period model.
 Input: 	r = discount rate
 		g = long term dividend growth rate
-		d = dividend vector n + 1
+		d = dividend per share
 Output: Stock price for n-period model
 '''
-def pvValueNperiodModel(r,g,d):
-	# Gordon Growth Model
- 	n = len(d) - 1
+def nPeriodDDM(r,g,d):
+	n = len(d) - 1
 	pv = sp.npv(r, d[:-1]) * (1 + r)
 	sellingPrice = d[n] / (r - g)
 	pv += sp.pv(r,n,0,-sellingPrice)
- 	return pv
+	return pv
 
+'''
+Estimates stock price using Donaldson-Kamstra Gordon Growth Model
+Input: 	d = dividend per share
+		n = number of periods
+Output: Stock price for n-period model
+'''
+def nPeriodGGM(d,n):
+	list_growth_rate = sp.random.standard_normal(n)
+	list_discount_rate = sp.random.standard_normal(n)
+	print(list_discount_rate)
+	print(list_growth_rate)
 '''
 Histogram for normal distribution
 Input:	m = specified mean
@@ -40,32 +50,39 @@ if __name__ == "__main__":
 	# r = 0.182
 	# g = 0.03
 	# d = [1.8,2.07,2.277,2.48193,2.68,2.7877]
-
-	# mean = 0.1
-	# std = 0.2
-	# n = 1000
 	
-	print("\n1. Calculate the price of stock using Dividend Discount Model")
-	print("2. Generate histogram for set of random values\n")
-	option = raw_input("Select option: ")
+	print("\n1. Estimate the price of stock using Dividend Discount Model")
+	print("2. Estimate the price of stock using Donaldson-Kamstra Gordon Growth Model")
+	print("3. Generate histogram for set of random values\n")
+	option = input("Select option: ")
+
+	# Dividend Discount Model
 	if option == '1':
-		print("\n--Calculating the price of stock using the Dividend Discount Model--\n")
-		r = float(raw_input("Enter the discount rate: "))
-		g = float(raw_input("Enter the long term dividend growth rate: "))
+		print("\n--Dividend Discount Model--\n")
+		r = float(input("Enter the discount rate: "))
+		g = float(input("Enter the long term dividend growth rate: "))
 		d = []
 
 		while True:
-			entry = raw_input("Enter a dividend (q to quit): ")
+			entry = input("Enter a dividend (q to quit): ")
 			if entry.lower() == 'q':
 				break
 			d.append(float(entry))
 
-		print "\nEstimated stock price: {}\n".format(pvValueNperiodModel(r,g,d))
+		print ("\nEstimated stock price: {}\n".format(nPeriodDDM(r,g,d)))
 
+	# Donaldson-Kamstra Gordon Growth Model
+	elif option == '2':
+		print("\n--Donaldson-Kamstra Gordon Growth Model--\n")
+		d = float(input("Enter the initial dividend per share: "))
+		n = int(input("Enter the number of periods: "))
+		nPeriodGGM(d,n)
+
+	# Histogram
 	else:
 		print("\n--Generate the histogram--\n")
-		mean = float(raw_input("Enter the mean: "))
-		std = float(raw_input("Enter the standard deviation: "))
-		n = int(raw_input("Enter the number of variables: "))
+		mean = float(input("Enter the mean: "))
+		std = float(input("Enter the standard deviation: "))
+		n = int(input("Enter the number of variables: "))
 
 		generateNormalHistogram(mean, std, n)
